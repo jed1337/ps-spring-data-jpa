@@ -3,7 +3,7 @@ package com.pluralsight.conferencedemo.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hibernate.dialect.PostgreSQL95Dialect;
+import org.hibernate.dialect.MySQL57Dialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -23,19 +23,21 @@ public class JpaConfiguration {
 	public DataSource getDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
-		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql:conference_app");
+		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql://localhost:3306/conference_demo?serverTimezone=UTC");
 		dataSource.setUsername("root");
-		dataSource.setPassword("");
+		dataSource.setPassword("p@ssword");
 
 		return dataSource;
 	}
 
 	@Bean
 	public Map<String, Object> jpaProperties() {
-		Map<String, Object> props = new HashMap<String, Object>();
-		props.put("hibernate.dialect", PostgreSQL95Dialect.class.getName());
-//		props.put("hibernate.cache.provider_class", HashtableCacheProvider.class.getName());
+		Map<String, Object> props = new HashMap<>();
+		props.put("hibernate.dialect", MySQL57Dialect.class.getName());
+		props.put("spring.jpa.hibernate.ddl-auto", "none");
+		props.put("spring.jpa.show-sql","true");
+		props.put("spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation","true");
 		return props;
 	}
 
@@ -43,8 +45,9 @@ public class JpaConfiguration {
 	public JpaVendorAdapter jpaVendorAdapter() {
 		HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
 		hibernateJpaVendorAdapter.setShowSql(true);
-		hibernateJpaVendorAdapter.setGenerateDdl(true);
-		hibernateJpaVendorAdapter.setDatabase(Database.H2);
+		hibernateJpaVendorAdapter.setGenerateDdl(false);
+		hibernateJpaVendorAdapter.setDatabase(Database.MYSQL);
+		hibernateJpaVendorAdapter.setDatabasePlatform("org.hibernate.dialect.MySQL5InnoDBDialect");
 		return hibernateJpaVendorAdapter;
 	}
 
@@ -61,5 +64,4 @@ public class JpaConfiguration {
 		lef.setJpaVendorAdapter(this.jpaVendorAdapter());
 		return lef;
 	}
-
 }
