@@ -15,4 +15,7 @@ public interface SessionJpaRepository extends JpaRepository<Session, Long> {
     //from sessions session0_
     //where session0_.session_name like ? escape ?
     List<Session> findBySessionNameContaining(String name);
+
+    List<Session> findBySessionLengthNot(Integer sessionLength);
+    List<Session> findBySessionNameNotLike(String sessionName);
 }
